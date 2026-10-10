@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tic Tac Toe AI • Windows Desktop Widget with Minimax AI, tactile 3x3 grid, and real-time score tracker.">
+  <title>Tic Tac Toe AI • Desktop Widget</title>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ====================================================================
+       Tic Tac Toe AI Desktop Widget
+       ==================================================================== -->
+  <main class="widget-wrapper" id="widgetWrapper" role="region" aria-label="Tic Tac Toe AI Widget">
+    <div class="widget-card" id="widgetCard">
+      
+      <!-- Windows 11 Fluent Title Bar (Draggable) -->
+      <div class="widget-titlebar" id="widgetTitlebar">
+        <div class="titlebar-brand">
+          <div class="app-icon" aria-hidden="true">#</div>
+          <div class="brand-text-group">
+            <div class="brand-title">
+              <h1>Tic Tac Toe AI</h1>
+              <span class="brand-pill">Widget</span>
+            </div>
+            <span class="brand-subtitle">Quick Play • Powered by Minimax</span>
+          </div>
+        </div>
+
+        <!-- Title Bar Controls -->
+        <div class="titlebar-actions">
+          <!-- Sound FX Toggle -->
+          <button class="icon-btn" id="soundToggleBtn" title="Toggle Sound FX" aria-label="Toggle Sound FX">
+            <svg id="soundIconOn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <svg id="soundIconOff" style="display:none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+          </button>
+
+          <!-- Dark / Light Theme Toggle -->
+          <button class="icon-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Widget Body: Grid Arena + Score Tracker & Settings -->
+      <div class="widget-body">
+        
+        <!-- LEFT COLUMN: Status Bar + 3x3 Tactile Grid + Reset Button -->
+        <section class="game-arena-column">
+          
+          <!-- Status Bar at the Top indicating active player's turn -->
+          <div class="status-bar-card" id="statusBarCard">
+            <div class="status-left">
+              <div class="status-badge" id="statusBadge" aria-live="polite">X</div>
+              <div class="status-texts">
+                <span class="status-title" id="statusTitle">Your Turn</span>
+                <div class="status-message-row">
+                  <span class="status-message" id="statusMessage">Make your move, Player X</span>
+                  <!-- AI Thinking Dots Animation -->
+                  <div class="ai-thinking-indicator" id="aiThinkingDots">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="status-right">
+              <div class="turn-pill">
+                <span class="turn-indicator-dot" id="turnDot"></span>
+                <span id="turnCounterLabel">TURN 1</span>
+              </div>
+            </div>
+
+            <!-- Animated Progress Line -->
+            <div class="status-progress-track">
+              <div class="status-progress-fill" id="statusFill"></div>
+            </div>
+          </div>
+
+          <!-- Centered 3x3 Grid with Rounded Square Buttons -->
+          <div class="grid-board-enclosure">
+            <div class="board-3x3" id="boardGrid" role="grid" aria-label="Tic Tac Toe Grid">
+              <button class="cell-button" data-index="0" id="cell-0" role="gridcell" aria-label="Top Left Cell" data-ghost="X">
+                <span class="cell-mark"></span>
+              </button>
+              <button class="cell-button" data-index="1" id="cell-1" role="gridcell" aria-label="Top Middle Cell" data-ghost="X">
+                <span class="cell-mark"></span>
+              </button>
+              <button class="cell-button" data-index="2" id="cell-2" role="gridcell" aria-label="Top Right Cell" data-ghost="X">
+                <span class="cell-mark"></span>
+              </button>
+              <button class="cell-button" data-index="3" id="cell-3" role="gridcell" aria-label="Middle Left Cell" data-ghost="X">
+                <span class="cell-mark"></span>
+              </button>
+              <button class="cell-button" data-index="4" id="cell-4" role="gridcell" aria-label="Center Cell" data-ghost="X">
+                <span class="cell-mark"></span>
+              </button>
+              <button class="cell-button" data-index="5" id="cell-5" role="gridcell" aria-label="Middle Right Cell" data-ghost="X">
+                <span class="cell-mark"></span>
+              </button>
+              <button class="cell-button" data-index="6" id="cell-6" role="gridcell" aria-label="Bottom Left Cell" data-ghost="X">
+                <span class="cell-mark"></span>
+              </button>
+              <button class="cell-button" data-index="7" id="cell-7" role="gridcell" aria-label="Bottom Middle Cell" data-ghost="X">
+                <span class="cell-mark"></span>
+              </button>
+              <button class="cell-button" data-index="8" id="cell-8" role="gridcell" aria-label="Bottom Right Cell" data-ghost="X">
+                <span class="cell-mark"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Prominent Reset Button below the Grid -->
+          <div class="board-footer-actions">
+            <button class="btn-primary-reset" id="resetGameBtn" title="Restart current match (Spacebar)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              <span>Restart Game</span>
+              <span class="key-hint">Space</span>
+            </button>
+            <button class="btn-secondary-reset" id="clearScoresBtn" title="Reset all scoreboard wins and stats">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span>Reset Stats</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- RIGHT COLUMN: Score Tracker & AI Difficulty Controller -->
+        <aside class="sidebar-controls-column">
+          
+          <!-- Game Mode Switcher: AI Opponent vs Pass & Play -->
+          <div class="mode-toggle-group">
+            <button class="mode-tab active" id="modeAiBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                <circle cx="12" cy="5" r="2"></circle>
+                <path d="M12 7v4"></path>
+                <line x1="8" y1="16" x2="8" y2="16"></line>
+                <line x1="16" y1="16" x2="16" y2="16"></line>
+              </svg>
+              <span>vs AI Opponent</span>
+            </button>
+            <button class="mode-tab" id="mode2pBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <span>2-Player</span>
+            </button>
+          </div>
+
+          <!-- AI Difficulty Selector -->
+          <div class="ai-settings-card" id="aiSettingsCard">
+            <div class="section-label-row">
+              <span class="section-label">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                AI Difficulty
+              </span>
+              <span class="active-diff-pill" id="currentDiffPill">Minimax AI</span>
+            </div>
+
+            <div class="difficulty-button-grid">
+              <!-- Basic Difficulty: Random moves -->
+              <button class="diff-btn" data-diff="basic" id="diffBasicBtn" title="Basic AI: Plays random moves">
+                <span>Basic</span>
+                <span class="diff-sub">Random Moves</span>
+              </button>
+              <!-- Advanced Difficulty: Minimax algorithm -->
+              <button class="diff-btn active" data-diff="advanced" id="diffAdvancedBtn" title="Advanced AI: Unbeatable Minimax Tree">
+                <span>Advanced</span>
+                <span class="diff-sub">Minimax Tree</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Score Tracker on the Side showing wins and draws -->
+          <div class="score-tracker-section">
+            <div class="score-header-row">
+              <span class="section-label">Score Tracker</span>
+              <div class="streak-indicator" id="streakBadge" title="Current Winning Streak">
+                <span>🔥</span>
+                <span>Streak: <strong id="streakVal">0</strong></span>
+              </div>
+            </div>
+
+            <div class="score-cards-grid">
+              <!-- Player X Score Card -->
+              <div class="score-card player-x-card active-turn" id="scoreCardX">
+                <span class="score-card-label">You (X)</span>
+                <span class="score-card-val" id="scoreValX">0</span>
+              </div>
+
+              <!-- Draws Score Card -->
+              <div class="score-card ties-card" id="scoreCardTies">
+                <span class="score-card-label">Draws</span>
+                <span class="score-card-val" id="scoreValTies">0</span>
+              </div>
+
+              <!-- Player O / AI Score Card -->
+              <div class="score-card player-o-card" id="scoreCardO">
+                <span class="score-card-label" id="scoreLabelO">AI (O)</span>
+                <span class="score-card-val" id="scoreValO">0</span>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+      </div>
+
+      <!-- Windows Sub-Footer -->
+      <footer class="widget-sub-footer">
+        <div class="footer-system-state">
+          <span class="status-dot"></span>
+          <span id="footerStatusText">AI Ready • Advanced Minimax Active</span>
+        </div>
+        <div>Windows 11 Fluent Desktop Widget</div>
+      </footer>
+
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

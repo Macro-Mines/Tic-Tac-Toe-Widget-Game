@@ -1,0 +1,22 @@
+{
+  "name": "tic-tac-toe-ai",
+  "version": "1.0.0",
+  "description": "Windows desktop widget application for Tic Tac Toe AI with Minimax and instant launch.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "tic-tac-toe",
+    "minimax",
+    "widget",
+    "windows",
+    "game"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^41.2.1"
+  }
+}

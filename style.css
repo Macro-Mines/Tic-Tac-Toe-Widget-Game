@@ -1,0 +1,925 @@
+/* ==========================================================================
+   Tic Tac Toe AI • Windows Desktop Widget Theme & Design System
+   Aesthetic: Windows 11 Fluent / Acrylic Glassmorphism & Tactile Slate
+   ========================================================================== */
+
+:root {
+  /* Design Tokens - Colors */
+  --acrylic-bg: #f8fafc;
+  --acrylic-border: rgba(226, 232, 240, 0.9);
+  
+  --titlebar-bg: #f1f5f9;
+  --titlebar-border: #e2e8f0;
+
+  --player-x: #4f46e5;
+  --player-x-hover: #4338ca;
+  --player-x-light: #eef2ff;
+  --player-x-border: #c7d2fe;
+  --player-x-glow: rgba(79, 70, 229, 0.35);
+
+  --player-o: #f43f5e;
+  --player-o-hover: #e11d48;
+  --player-o-light: #fff1f2;
+  --player-o-border: #fecdd3;
+  --player-o-glow: rgba(244, 63, 94, 0.35);
+
+  --accent-emerald: #10b981;
+  --accent-emerald-light: #ecfdf5;
+  --accent-emerald-border: #a7f3d0;
+
+  --accent-amber: #f59e0b;
+  --accent-amber-light: #fffbeb;
+  --accent-amber-border: #fde68a;
+
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+
+  --surface-grid: #f1f5f9;
+  --cell-bg: #ffffff;
+  --cell-border: rgba(226, 232, 240, 0.9);
+  --cell-hover-border: #818cf8;
+  --cell-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --cell-shadow-hover: 0 10px 24px -4px rgba(79, 70, 229, 0.16), 0 4px 8px -2px rgba(15, 23, 42, 0.06);
+
+  /* Typography */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Geometry & Radii */
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Dark mode support toggle */
+body.dark-mode {
+  --acrylic-bg: #0f172a;
+  --acrylic-border: rgba(255, 255, 255, 0.1);
+
+  --titlebar-bg: #1e293b;
+  --titlebar-border: rgba(255, 255, 255, 0.08);
+
+  --player-x-light: rgba(79, 70, 229, 0.18);
+  --player-x-border: rgba(129, 140, 248, 0.35);
+
+  --player-o-light: rgba(244, 63, 94, 0.18);
+  --player-o-border: rgba(251, 113, 133, 0.35);
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --surface-grid: rgba(30, 41, 59, 0.7);
+  --cell-bg: #1e293b;
+  --cell-border: rgba(255, 255, 255, 0.1);
+  --cell-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================================================
+   Base & Layout (Widget is the entire window, no desktop background)
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-body);
+  color: var(--text-main);
+  background: var(--acrylic-bg);
+}
+
+/* Main Widget Wrapper fills the window */
+.widget-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.widget-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--acrylic-bg);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Widget Title Bar (Native Windows 11 Chrome + Window Dragging)
+   ========================================================================== */
+
+.widget-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--titlebar-bg);
+  border-bottom: 1px solid var(--titlebar-border);
+  -webkit-app-region: drag; /* Native window drag */
+  cursor: grab;
+}
+
+.widget-titlebar button,
+.titlebar-actions {
+  -webkit-app-region: no-drag; /* Keep buttons interactive */
+}
+
+.titlebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.35);
+}
+
+.brand-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-title h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.brand-pill {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--player-x-light);
+  color: var(--player-x);
+  border: 1px solid var(--player-x-border);
+}
+
+.brand-subtitle {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+/* Title bar Controls (Sound & Theme Toggles) */
+.titlebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 8px;
+}
+
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-main);
+}
+
+body.dark-mode .icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Widget Body Layout (2 Columns: Grid Arena + Stats/Settings)
+   ========================================================================== */
+
+.widget-body {
+  flex: 1;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  align-items: center;
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   Left Column: Status Bar + 3x3 Grid + Reset Controls
+   ========================================================================== */
+
+.game-arena-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status Bar at the top of the grid */
+.status-bar-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--player-x-light);
+  border: 1px solid var(--player-x-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: all var(--transition-smooth);
+}
+
+.status-bar-card.state-o {
+  background: var(--player-o-light);
+  border-color: var(--player-o-border);
+}
+
+.status-bar-card.state-win {
+  background: var(--accent-emerald-light);
+  border-color: var(--accent-emerald-border);
+}
+
+.status-bar-card.state-draw {
+  background: var(--accent-amber-light);
+  border-color: var(--accent-amber-border);
+}
+
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: var(--player-x);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.25);
+  transition: all var(--transition-smooth);
+}
+
+.status-bar-card.state-o .status-badge {
+  background: var(--player-o);
+  box-shadow: 0 4px 8px rgba(244, 63, 94, 0.25);
+}
+
+.status-bar-card.state-win .status-badge {
+  background: var(--accent-emerald);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.25);
+}
+
+.status-bar-card.state-draw .status-badge {
+  background: var(--accent-amber);
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.25);
+}
+
+.status-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--player-x);
+}
+
+.status-bar-card.state-o .status-title { color: var(--player-o); }
+.status-bar-card.state-win .status-title { color: var(--accent-emerald); }
+.status-bar-card.state-draw .status-title { color: var(--accent-amber); }
+
+.status-message-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-message {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* AI Thinking Dots Animation */
+.ai-thinking-indicator {
+  display: none;
+  align-items: center;
+  gap: 3px;
+}
+
+.ai-thinking-indicator.active {
+  display: flex;
+}
+
+.ai-thinking-indicator span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--player-o);
+}
+
+.ai-thinking-indicator span:nth-child(1) { animation: thinkingBounce 1s infinite 0s; }
+.ai-thinking-indicator span:nth-child(2) { animation: thinkingBounce 1s infinite 0.2s; }
+.ai-thinking-indicator span:nth-child(3) { animation: thinkingBounce 1s infinite 0.4s; }
+
+@keyframes thinkingBounce {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.turn-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+body.dark-mode .turn-pill {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+.turn-indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--player-x);
+  animation: pulseDot 1.5s infinite;
+}
+
+.status-bar-card.state-o .turn-indicator-dot {
+  background-color: var(--player-o);
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* Animated bottom fill progress line */
+.status-progress-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.status-progress-fill {
+  height: 100%;
+  width: 50%;
+  background: var(--player-x);
+  transition: all 0.3s ease;
+}
+
+.status-bar-card.state-o .status-progress-fill {
+  background: var(--player-o);
+  width: 100%;
+}
+
+.status-bar-card.state-win .status-progress-fill {
+  background: var(--accent-emerald);
+  width: 100%;
+}
+
+.status-bar-card.state-draw .status-progress-fill {
+  background: var(--accent-amber);
+  width: 100%;
+}
+
+/* ==========================================================================
+   Centered 3x3 Tactile Grid Arena
+   ========================================================================== */
+
+.grid-board-enclosure {
+  position: relative;
+  background: var(--surface-grid);
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.03);
+}
+
+.board-3x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* Centered Rounded Square Cells */
+.cell-button {
+  position: relative;
+  background: var(--cell-bg);
+  border: 1.5px solid var(--cell-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--cell-shadow);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast),
+              border-color var(--transition-fast),
+              background-color var(--transition-fast);
+}
+
+.cell-button:hover:not(.taken):not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--cell-hover-border);
+  box-shadow: var(--cell-shadow-hover);
+}
+
+.cell-button:active:not(.taken):not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Ghost Preview Mark on Hover */
+.cell-button:not(.taken):hover::before {
+  content: attr(data-ghost);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 38px;
+  line-height: 1;
+  opacity: 0.16;
+  color: var(--player-x);
+  pointer-events: none;
+}
+
+/* Actual Mark in Cell */
+.cell-mark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 42px;
+  line-height: 1;
+  display: inline-block;
+  opacity: 0;
+  transform: scale(0.4) rotate(-10deg);
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cell-mark.pop-in {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.cell-mark.mark-x { color: var(--player-x); }
+.cell-mark.mark-o { color: var(--player-o); }
+
+/* Taken Cell Appearance */
+.cell-button.taken.taken-x {
+  background: var(--player-x-light);
+  border-color: var(--player-x-border);
+  cursor: default;
+}
+
+.cell-button.taken.taken-o {
+  background: var(--player-o-light);
+  border-color: var(--player-o-border);
+  cursor: default;
+}
+
+/* Winning Triple Highlight Cells */
+.cell-button.win-cell {
+  background: var(--accent-emerald-light) !important;
+  border-color: var(--accent-emerald) !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.35), inset 0 0 0 2px var(--accent-emerald) !important;
+  animation: winPulse 1.6s ease-in-out infinite;
+}
+
+.cell-button.win-cell .cell-mark {
+  color: var(--accent-emerald) !important;
+}
+
+@keyframes winPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* ==========================================================================
+   Action Controls Below the Grid (Reset & New Game)
+   ========================================================================== */
+
+.board-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.btn-primary-reset {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+  transition: all var(--transition-fast);
+}
+
+body.dark-mode .btn-primary-reset {
+  background: #4f46e5;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary-reset:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.btn-primary-reset:active {
+  transform: translateY(1px);
+}
+
+.btn-primary-reset .key-hint {
+  font-family: monospace;
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.btn-secondary-reset {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 12px;
+  background: var(--surface-grid);
+  color: var(--text-muted);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary-reset:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-main);
+}
+
+/* ==========================================================================
+   Right Column: Score Tracker & AI Difficulty Control Center
+   ========================================================================== */
+
+.sidebar-controls-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Game Mode Toggle Tabs */
+.mode-toggle-group {
+  display: flex;
+  background: var(--surface-grid);
+  padding: 3px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mode-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.mode-tab.active {
+  background: #ffffff;
+  color: var(--player-x);
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+body.dark-mode .mode-tab.active {
+  background: #1e293b;
+  color: #818cf8;
+}
+
+/* AI Difficulty Panel */
+.ai-settings-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+body.dark-mode .ai-settings-card {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.section-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.active-diff-pill {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--player-x-light);
+  color: var(--player-x);
+  border: 1px solid var(--player-x-border);
+}
+
+.difficulty-button-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.diff-btn {
+  padding: 8px 6px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+body.dark-mode .diff-btn {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
+.diff-btn .diff-sub {
+  font-size: 8px;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.diff-btn:hover {
+  background: var(--surface-grid);
+  color: var(--text-main);
+}
+
+.diff-btn.active {
+  background: var(--player-x-light);
+  border-color: var(--player-x);
+  color: var(--player-x);
+  font-weight: 700;
+}
+
+body.dark-mode .diff-btn.active {
+  background: rgba(79, 70, 229, 0.25);
+  border-color: #818cf8;
+  color: #c7d2fe;
+}
+
+/* ==========================================================================
+   Dedicated Score Tracker Cards (Wins, Draws, Losses, Streak)
+   ========================================================================== */
+
+.score-tracker-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.score-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.streak-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ea580c;
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+}
+
+body.dark-mode .streak-indicator {
+  background: rgba(234, 88, 12, 0.15);
+  border-color: rgba(234, 88, 12, 0.3);
+  color: #fdba74;
+}
+
+.score-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.score-card {
+  padding: 8px 6px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: 1.5px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.score-card.player-x-card {
+  background: var(--player-x-light);
+  border-color: var(--player-x-border);
+}
+
+.score-card.player-x-card.active-turn {
+  box-shadow: 0 0 0 2px var(--player-x);
+}
+
+.score-card.ties-card {
+  background: var(--surface-grid);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.score-card.player-o-card {
+  background: var(--player-o-light);
+  border-color: var(--player-o-border);
+}
+
+.score-card.player-o-card.active-turn {
+  box-shadow: 0 0 0 2px var(--player-o);
+}
+
+.score-card-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.player-x-card .score-card-label { color: var(--player-x); }
+.ties-card .score-card-label { color: var(--text-muted); }
+.player-o-card .score-card-label { color: var(--player-o); }
+
+.score-card-val {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.player-x-card .score-card-val { color: var(--player-x); }
+.ties-card .score-card-val { color: var(--text-main); }
+.player-o-card .score-card-val { color: var(--player-o); }
+
+/* ==========================================================================
+   Widget Footer Status Bar
+   ========================================================================== */
+
+.widget-sub-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: var(--titlebar-bg);
+  border-top: 1px solid var(--titlebar-border);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.footer-system-state {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.footer-system-state .status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-emerald);
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+
+@media (max-width: 680px) {
+  .widget-body {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 12px;
+  }
+}
